@@ -34,7 +34,6 @@ public class frmMain extends javax.swing.JFrame {
      */
     public frmMain() {
         initComponents();
-        SelectedData();
         SetTanggal();
         SetJam();
     }
@@ -242,28 +241,21 @@ public class frmMain extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null}
             },
             new String [] {
                 "NIS", "Nama Siswa", "Tempat Lahir", "Tanggal Lahir", "Jenis Kelamin", "Kelas", "Email", "Alamat"
             }
         ));
+        tblData.setEnabled(false);
         tblData.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblDataMouseClicked(evt);
             }
         });
         jScrollPane2.setViewportView(tblData);
-        if (tblData.getColumnModel().getColumnCount() > 0) {
-            tblData.getColumnModel().getColumn(0).setResizable(false);
-            tblData.getColumnModel().getColumn(1).setResizable(false);
-            tblData.getColumnModel().getColumn(2).setResizable(false);
-            tblData.getColumnModel().getColumn(3).setResizable(false);
-            tblData.getColumnModel().getColumn(4).setResizable(false);
-            tblData.getColumnModel().getColumn(5).setResizable(false);
-            tblData.getColumnModel().getColumn(6).setResizable(false);
-            tblData.getColumnModel().getColumn(7).setResizable(false);
-        }
 
         jPanel4.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 9, 570, 400));
 
@@ -299,28 +291,34 @@ public class frmMain extends javax.swing.JFrame {
         // TODO add your handling code here:
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String tanggal = dateFormat.format(Tanggal.getDate());
+        String JK = "";
+            if (rdLaki.isSelected()) {
+                JK = "L";
+            } if (rdPerempuan.isSelected()){
+                JK = "P";
+            }
         
         if (txtNIS.getText().equals("") || txtNama.getText().equals("") || Tanggal.equals("") ||
             txtKelas.getText().equals("") || txtEmail.getText().equals("") || txtTempat.getText().equals("") ||
             txtAlamat.getText().equals("")){
             JOptionPane.showMessageDialog(this, "Harap Lengkapi Data", "Error", JOptionPane.WARNING_MESSAGE);
-        } else {
-        String JK = "";
-            if (rdLaki.isSelected()) {
-                JK = "L";
-            } else {
-                JK = "P";
-            }
+        } 
+        else 
+        {
         
-            String SQL = "INSERT INTO t_siswa (NIS,NamaSiswa,JenisKelamin,Kelas,Email,Alamat,TempatLahir,TanggalLahir)"
-                + "VALUES ('"+txtNIS.getText()+"','"+txtNama.getText()+"','"+JK+"',"
-                + "'"+txtKelas.getText()+"','"+txtEmail.getText()+"','"+txtAlamat.getText()+"','"+txtTempat.getText()+"','"+Tanggal+"')";
-            int status = KoneksiDB.execute((String) SQL);
-            if(status == 1){
+        
+            String SQL = "INSERT INTO t_siswa (NIS,NamaSiswa,TempatLahir,TanggalLahir,JenisKelamin,Kelas,Email,Alamat)"
+                + "VALUES('"+txtNIS.getText()+"','"+txtNama.getText()
+                + "','"+txtTempat.getText()+"','"+tanggal+"','"+JK+"',"
+                + "'"+txtKelas.getText()+"','"+txtEmail.getText()+"','"+txtAlamat.getText()+"')";
+            int status = KoneksiDB.execute(SQL);
+            
+            if(status == 1)
+            {
             JOptionPane.showMessageDialog(this, "Data Berhasil ditambahkan", "Sukses", JOptionPane.INFORMATION_MESSAGE);
             SelectedData();
-            }else {
-            JOptionPane.showMessageDialog(this, "Data gagal ditambahkan","Sukses",JOptionPane.WARNING_MESSAGE);
+            }
+            else {
             }
             
         
@@ -330,12 +328,15 @@ public class frmMain extends javax.swing.JFrame {
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // TODO add your handling code here:
         int baris = tblData.getSelectedRow();
-        if (baris != -1) {
+        if (baris != -1) 
+        {
             String NIS = tblData.getValueAt(baris, 0).toString();
             String SQL = "DELETE FROM t_siswa WHERE NIS='"+NIS+"'";
             int status = KoneksiDB.execute(SQL);
-            if (status==1) {
+            if (status==1) 
+            {
                 JOptionPane.showMessageDialog(this, "Data berhasil dihapus", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                selectedData();
             } else {
                 JOptionPane.showMessageDialog(this, "Data gagal dihapus", "Gagal", JOptionPane.WARNING_MESSAGE);
             }
@@ -405,7 +406,7 @@ public class frmMain extends javax.swing.JFrame {
     private void tblDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDataMouseClicked
         // TODO add your handling code here:
         int baris = tblData.getSelectedRow();
-        if (baris != -1) {
+        if (baris !=-1) {
             txtNIS.setText(tblData.getValueAt(baris, 0).toString());
             txtNama.setText(tblData.getValueAt(baris, 1).toString());
             txtTempat.setText(tblData.getValueAt(baris, 2).toString());
@@ -413,7 +414,9 @@ public class frmMain extends javax.swing.JFrame {
             Date dateFormat = null;
             try {
                 dateFormat = date.parse(tblData.getValueAt(baris, 3).toString());
-            } catch (ParseException ex) {
+            } 
+            catch (ParseException ex) 
+            {
                 Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
             }
             
@@ -445,14 +448,14 @@ public class frmMain extends javax.swing.JFrame {
     public void SelectedData() {
         String kolom[] = {"NIS","NamaSiswa","TempatLahir","TanggalLahir","JenisKelamin","Kelas","Email","Alamat"};
         DefaultTableModel dtm = new DefaultTableModel(null, kolom);
-        String SQL = "SELECT * FROM t_siswa";
+        String SQL = "SELECT * FROM `t_siswa`";
         ResultSet rs = KoneksiDB.executeQuery(SQL);
         try {
             while(rs.next()) {
                 String NIS = rs.getString(1);
                 String NamaSiswa = rs.getString(2);
                 String TempatLahir = rs.getString(3);
-                Date TanggalLahir = rs.getDate(4);
+                String TanggalLahir = rs.getString(4);
                 
                 String JenisKelamin = "";
                 if ("L".equals(rs.getString(5))) {
@@ -463,10 +466,11 @@ public class frmMain extends javax.swing.JFrame {
                 String Kelas = rs.getString(6);
                 String Email = rs.getString(7);
                 String Alamat = rs.getString(8);
-                Object data[] = {NIS,NamaSiswa,TempatLahir,TanggalLahir,JenisKelamin,Kelas,Email,Alamat};
+                String data[] = {NIS,NamaSiswa,TempatLahir,TanggalLahir,JenisKelamin,Kelas,Email,Alamat};
                 dtm.addRow(data);
             }
-        } catch (SQLException ex) {
+        } 
+        catch (SQLException ex) {
             Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
         }
         tblData.setModel(dtm);
@@ -580,4 +584,8 @@ public class frmMain extends javax.swing.JFrame {
     private javax.swing.JTextField txtNama;
     private javax.swing.JTextField txtTempat;
     // End of variables declaration//GEN-END:variables
+
+    private void selectedData() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

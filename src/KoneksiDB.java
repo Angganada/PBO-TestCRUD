@@ -34,10 +34,12 @@ System.out.println("Koneksi Gagal");
 }
 return koneksi;
 }
-public static int execute(String SQL) {
+public static int execute(String SQL) 
+{
 int status = 0;
 Connection koneksi = setKoneksi();
-try {
+try 
+{
 Statement st = koneksi.createStatement();
 status = st.executeUpdate(SQL);
 } catch (SQLException ex) {
